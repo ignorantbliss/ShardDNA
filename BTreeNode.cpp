@@ -88,6 +88,7 @@ bool BTreeNode::Load(DataStore *ds, std::streamoff pos)
 	Keys = new BTreeKey * [Base->KeysPerNode(leaf)];
 	if (_KeyCount > Base->KeysPerNode(leaf))
 	{
+		cout << "CRITICAL FILE ERROR: Node contains too many keys!" << endl;
 		delete buf;
 		return false;
 	}
@@ -183,6 +184,7 @@ bool BTreeNode::_Search(const void* key, int mode, BTreeSearchChain* Chain)
 	int cmp = 0;
 	
 	int ClosestIndex = 0;
+	int HighestIndex = -1;
 	
 	for (int x = 0; x < _KeyCount; x++)
 	{
@@ -192,18 +194,21 @@ bool BTreeNode::_Search(const void* key, int mode, BTreeSearchChain* Chain)
 
 			if (cmp == 0)
 			{
-				if (leaf == true)
-				{
-					Closest = Keys[x];
-					Chain->Key = new BTreeKey(*Closest);	//Keys[x];
-					return true;
-				}				
-				else
-				{
-					Closest = Keys[x];
-					ClosestIndex = x;
-					break;
-				}
+				/*if ((mode != BTREE_SEARCH_NEXT) || ((leaf == false) && (mode == BTREE_SEARCH_NEXT)))
+				{*/
+					if (leaf == true)
+					{
+						Closest = Keys[x];
+						Chain->Key = new BTreeKey(*Closest);
+						return true;
+					}
+					else
+					{
+						Closest = Keys[x];
+						ClosestIndex = x;
+						break;
+					}
+				//}
 			}
 			if (cmp < 0)
 			{
@@ -226,9 +231,25 @@ bool BTreeNode::_Search(const void* key, int mode, BTreeSearchChain* Chain)
 					ClosestIndex = x-1;
 					break;
 				}
+				if (mode == BTREE_SEARCH_NEXT)
+				{
+					Closest = Keys[x];					
+					ClosestIndex = x;
+					HighestIndex = x;
+					Chain->Key = new BTreeKey(*Keys[x]);	//Closest										
+				}
 			}
 		}
 	}
+	if ((leaf == true) && (mode == BTREE_SEARCH_NEXT))
+	{
+		if (HighestIndex == -1)
+		{
+			Closest = NULL;
+			ClosestIndex = -1;
+		}
+	}
+
 	if (Closest != NULL)
 	{
 		if (leaf == false)
@@ -256,7 +277,7 @@ bool BTreeNode::_Search(const void* key, int mode, BTreeSearchChain* Chain)
 		}
 		else
 		{
-			if (mode == BTREE_SEARCH_PREVIOUS)
+			if ((mode == BTREE_SEARCH_PREVIOUS) || (mode == BTREE_SEARCH_NEXT))
 			{
 				Chain->Key = new BTreeKey(*Closest);				
 				Chain->sequence[Chain->sequence.size() - 1].index = ClosestIndex + 1;

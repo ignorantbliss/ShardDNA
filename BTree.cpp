@@ -47,7 +47,7 @@ std::streamoff BTree::Create(DStore Ds)
 	std::streamoff of = _Create(Ds);
 	if (of > 0)
 	{
-		Historian::Instance->Log(LOGLEVEL_INFO, "BTree Base", "Creating BTree Root");
+		//Historian::Instance->Log(LOGLEVEL_INFO, "BTree Base", "Creating BTree Root");
 		Location = of;
 		Root = new BTreeNode(this->shared_from_this());
 		Root->Create(Ds.get(), true);
@@ -85,7 +85,7 @@ std::streamoff BTree::_Create(DStore Ds)
 	DS->WriteBlock(offset,buf);
 	delete []buf;
 	
-	Historian::Instance->Log(LOGLEVEL_INFO, "BTree Load", "BTree Loaded");
+	//Historian::Instance->Log(LOGLEVEL_INFO, "BTree Load", "BTree Loaded");
 
 	return offset;
 }
@@ -98,7 +98,7 @@ bool BTree::Load(DStore ds, std::streamoff offset)
 		std::streamoff of = _Create(ds);
 		if (of > 0)
 		{
-			Historian::Instance->Log(LOGLEVEL_INFO, "BTree Base", "Creating BTree Root");
+			//Historian::Instance->Log(LOGLEVEL_INFO, "BTree Base", "Creating BTree Root");
 			Location = of;
 			Root = new BTreeNode(this->shared_from_this());
 			Root->Create(DS.get(),true);
@@ -109,7 +109,7 @@ bool BTree::Load(DStore ds, std::streamoff offset)
 		return false;
 	}
 		
-	Historian::Instance->Log(LOGLEVEL_INFO, "BTree Base", "Reading BTree Root");
+	//Historian::Instance->Log(LOGLEVEL_INFO, "BTree Base", "Reading BTree Root");
 	char* buf = DS->ReadBlock(offset);
 	if (!LoadHeader(buf, DS->BlockSize()))
 	{
@@ -127,7 +127,7 @@ bool BTree::Load(DStore ds, std::streamoff offset)
 	if (!Root->Load(DS.get(), Location + DS->BlockSize()))
 		return false;
 
-	Historian::Instance->Log(LOGLEVEL_INFO, "BTree Base", "BTree Root Loaded");
+	//Historian::Instance->Log(LOGLEVEL_INFO, "BTree Base", "BTree Root Loaded");
 
 	return true;
 }
@@ -298,7 +298,7 @@ DStore BTree::GetDataStore()
 PCursor BTree::FirstNode()
 {
 	BTreeNode* Rt = Root->FirstLeaf();
-	PCursor P;
+	PCursor P(new Cursor());
 	P->SetPosition(Rt->position, 0);	
 	P->SetTree(Rt->Base->shared_from_this());
 	return P;

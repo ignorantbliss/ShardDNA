@@ -19,14 +19,17 @@
  */
 
 #include "pch.h"
+
+#ifdef _WIN32
+#include <Windows.h>
+#endif
+
 #include "DataStore.h"
 #include "Historian.h"
 #include <filesystem>
 #include <fstream>
 
-#ifdef _WIN32
-#include <Windows.h>
-#endif
+
 
 using namespace std;
 
@@ -88,7 +91,7 @@ bool DataStore::OpenOrCreate(const char *fn)
 	filename = ConvertPaths(fn);
 	std::string st = "Opening Data Store: ";
 	st += fn;
-	Historian::Instance->Log(LOGLEVEL_INFO, "DataStore",st.c_str());
+	//Historian::Instance->Log(LOGLEVEL_INFO, "DataStore",st.c_str());
 	file.open(filename.c_str(),fstream::in | fstream::out | fstream::binary);
 	if (file.is_open() == false)
 	{
@@ -129,7 +132,7 @@ bool DataStore::Init()
 	string Out = "Bytes Per Block: ";
 	Out += BytesPerBlock;
 
-	Historian::Instance->Log(LOGLEVEL_INFO, "Datastore Init", Out.c_str());
+	//Historian::Instance->Log(LOGLEVEL_INFO, "Datastore Init", Out.c_str());
 	
 
 	//Calculate total number of keys given the stated key size...
@@ -139,7 +142,7 @@ bool DataStore::Init()
 	msg += filename;
 	//msg += " Maximum Key Size = ";
 	//msg += MaxKeys;
-	Historian::Instance->Log(LOGLEVEL_INFO,"Datastore Init",msg.c_str());
+	//Historian::Instance->Log(LOGLEVEL_INFO,"Datastore Init",msg.c_str());
 
 	//cout << "File " << this->File->filename.c_str() << " Maximum Key Size = " << MaxKeys << " over " << Blocks << " Disk Blocks" << endl;	
 
@@ -151,13 +154,13 @@ bool DataStore::Init()
 
 bool DataStore::Load()
 {
-	Historian::Instance->Log(LOGLEVEL_INFO, "Datastore Init", "Loading Store Details");
+	//Historian::Instance->Log(LOGLEVEL_INFO, "Datastore Init", "Loading Store Details");
 	bool r = ReadFileHeader();	
 	std::string msg = "File ";
 	msg += filename;
 	msg += " Block Size = ";
 	msg += (int)BytesPerBlock;
-	Historian::Instance->Log(LOGLEVEL_INFO, "Datastore Load", msg.c_str());
+	//Historian::Instance->Log(LOGLEVEL_INFO, "Datastore Load", msg.c_str());
 
 	file.seekg(0, ios::end);
 	std::streamoff pos = file.tellg();

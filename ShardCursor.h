@@ -21,8 +21,9 @@ public:
 	double Value();
 protected:
 	std::string Series;
-	PCursor Cursor;
+	PCursor ActiveCursor;
 	History* Hist;
 	bool EoF;
+	time_t LastTimestamp;
 };
 

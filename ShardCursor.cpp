@@ -5,8 +5,9 @@
 ShardCursor::ShardCursor(History* H, std::shared_ptr<::Cursor> C)
 {
 	Hist = H;
-	Cursor = C;
+	ActiveCursor = C;
 	EoF = false;
+	LastTimestamp = 0;
 }
 
 ShardCursor::~ShardCursor()
@@ -15,82 +16,43 @@ ShardCursor::~ShardCursor()
 }
 
 int ShardCursor::Next()
-{
-	int Ret = Cursor->Next();
+{	
+	int Ret = ActiveCursor->Next();
 	if (Ret == CURSOR_END)
 	{
-		//Check to see if there is anything else in the next shard...
-			
-		DStore DS = Hist->GetNextStore(Cursor->Tree->GetDataStore());
-		while (DS != NULL)
-		{
-			//Find the list of points inside this shard
-			BTree PointList;
-			PointList.LeafTemplate.KeySize = 32;
-			PointList.BranchTemplate.KeySize = 32;
-			PointList.LeafTemplate.PayloadSize = sizeof(std::streamoff);
-			PointList.BranchTemplate.PayloadSize = sizeof(std::streamoff);
-			DS->Init();
-			if (!PointList.Load(DS, DS->BlockIndexToOffset(1)))
+		if (EoF == false)
+		{		
+			//Check to see if there is anything else in the next shard...			
+			//DStore DS = Hist->GetNextShardWith(LastTimestamp, Series.c_str());
+			std::shared_ptr<Cursor> Curse = Hist->GetNextShardWith(LastTimestamp, Series.c_str());
+			if (Curse == NULL)
 			{
 				this->EoF = true;
-				return CURSOR_END;
-			}
-			//Find this series in the point list
-			BTreeKey* Key = PointList.PointSearch(Series.c_str(), Series.size(), BTREE_SEARCH_EXACT);
-			if (Key == NULL)
-			{
-				//This series isn't present in this shard - keep trying
-				DStore DS = Hist->GetNextStore(Cursor->Tree->GetDataStore());
-				if (DS == NULL)
-				{
-					this->EoF = true;
-					break;
-				}
 			}
 			else
 			{
-				//Found the series - Create it
-				std::streamoff offset;
-				memcpy(&offset, Key->Payload(), sizeof(offset));
-
-				BTree Timeseries;
-				Timeseries.LeafTemplate.KeySize = sizeof(time_t);
-				Timeseries.BranchTemplate.KeySize = sizeof(time_t);
-				Timeseries.LeafTemplate.PayloadSize = sizeof(double);
-				Timeseries.BranchTemplate.PayloadSize = sizeof(std::streamoff);
-				Timeseries.SplitMode = BTREE_SPLITMODE_END;
-				offset = 0;
-
-				if (!Timeseries.Load(DS, offset))
-				{
-					this->EoF = true;
-					break;
-				}
-				else
-				{
-					//Change the position to the first node of the series.					
-					Cursor = Timeseries.FirstNode();
-					break;
-				}
+				//OK - we have a new shard.
+				ActiveCursor = Curse;
+				return ActiveCursor->Next();
 			}
-
 		}
-
-		this->EoF = true;	
+	}
+	else
+	{
+		LastTimestamp = Timestamp();
 	}
 	return Ret;
 }
 
 time_t ShardCursor::Timestamp()
 {
-	return *(time_t*)Cursor->Key();
+	return *(time_t*)ActiveCursor->Key();
 }
 
 
 double ShardCursor::Value()
 {
-	return *(double*)Cursor->Value();
+	return *(double*)ActiveCursor->Value();
 }
 
 void ShardCursor::SetParent(History* H)
@@ -109,16 +71,16 @@ int ShardCursor::NextStepCost()
 	{
 		return 1;
 	}
-	if (Cursor->Index < Cursor->Active->KeyCount() - 1)
+	if (ActiveCursor->Index < ActiveCursor->Active->KeyCount() - 1)
 	{
 		return 0;
 	}
 	else
 	{
-		if (Cursor->Active->Next == 0)
+		if (ActiveCursor->Active->Next == 0)
 		{
 			return 9999999;
 		}
-		return (int)(Cursor->Active->Next - Cursor->Offset);
+		return (int)(ActiveCursor->Active->Next - ActiveCursor->Offset);
 	}
 }

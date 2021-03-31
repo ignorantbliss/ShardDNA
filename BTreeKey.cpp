@@ -58,7 +58,7 @@ int BTreeKey::Write(char* buf)
 {
 	buf[0] = _code;	
 	memcpy(buf + 1, _buffer, _template->KeySize);
-	memcpy(buf + _template->KeySize + 1, _payload, _template->KeySize);
+	memcpy(buf + _template->KeySize + 1, _payload, _template->PayloadSize);
 	return _template->KeySize + 1 + _template->PayloadSize;
 }
 

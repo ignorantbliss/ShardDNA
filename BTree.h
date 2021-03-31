@@ -24,6 +24,7 @@
 #include "BTreeKey.h"
 #include "DataStore.h"
 #include "Cursor.h"
+#include <fstream>
 
 //Search and PointSearch should only return if there is an EXACT key match
 #define BTREE_SEARCH_EXACT		0
@@ -34,7 +35,6 @@
 
 #define PBTREE std::shared_ptr<BTree>
 
-#include <fstream>
 using namespace std;
 
 class DataStore;

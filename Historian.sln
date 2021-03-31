@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29215.179
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Historian", "Historian.vcxproj", "{51B80D51-8B6B-4936-A6D0-0871BACC139E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ShardDNA", "Historian.vcxproj", "{51B80D51-8B6B-4936-A6D0-0871BACC139E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Thistorian", "..\Thistorian\Thistorian.vcxproj", "{44963AF9-F01D-4ED4-9F8C-76750601E71B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ShardDNATest", "..\ShardDNATest\ShardDNATest.vcxproj", "{1C87A502-6FFF-4D47-94B2-259EC513E4F7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,22 @@ Global
 		{51B80D51-8B6B-4936-A6D0-0871BACC139E}.Release|x64.Build.0 = Release|x64
 		{51B80D51-8B6B-4936-A6D0-0871BACC139E}.Release|x86.ActiveCfg = Release|Win32
 		{51B80D51-8B6B-4936-A6D0-0871BACC139E}.Release|x86.Build.0 = Release|Win32
+		{44963AF9-F01D-4ED4-9F8C-76750601E71B}.Debug|x64.ActiveCfg = Debug|x64
+		{44963AF9-F01D-4ED4-9F8C-76750601E71B}.Debug|x64.Build.0 = Debug|x64
+		{44963AF9-F01D-4ED4-9F8C-76750601E71B}.Debug|x86.ActiveCfg = Debug|Win32
+		{44963AF9-F01D-4ED4-9F8C-76750601E71B}.Debug|x86.Build.0 = Debug|Win32
+		{44963AF9-F01D-4ED4-9F8C-76750601E71B}.Release|x64.ActiveCfg = Release|x64
+		{44963AF9-F01D-4ED4-9F8C-76750601E71B}.Release|x64.Build.0 = Release|x64
+		{44963AF9-F01D-4ED4-9F8C-76750601E71B}.Release|x86.ActiveCfg = Release|Win32
+		{44963AF9-F01D-4ED4-9F8C-76750601E71B}.Release|x86.Build.0 = Release|Win32
+		{1C87A502-6FFF-4D47-94B2-259EC513E4F7}.Debug|x64.ActiveCfg = Debug|x64
+		{1C87A502-6FFF-4D47-94B2-259EC513E4F7}.Debug|x64.Build.0 = Debug|x64
+		{1C87A502-6FFF-4D47-94B2-259EC513E4F7}.Debug|x86.ActiveCfg = Debug|Win32
+		{1C87A502-6FFF-4D47-94B2-259EC513E4F7}.Debug|x86.Build.0 = Debug|Win32
+		{1C87A502-6FFF-4D47-94B2-259EC513E4F7}.Release|x64.ActiveCfg = Release|x64
+		{1C87A502-6FFF-4D47-94B2-259EC513E4F7}.Release|x64.Build.0 = Release|x64
+		{1C87A502-6FFF-4D47-94B2-259EC513E4F7}.Release|x86.ActiveCfg = Release|Win32
+		{1C87A502-6FFF-4D47-94B2-259EC513E4F7}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

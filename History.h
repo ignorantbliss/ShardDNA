@@ -23,8 +23,8 @@
 #include "LogListener.h"
 #include "DataStore.h"
 #include "BTree.h"
-//#include "Query.h"
 #include "TSPoint.h"
+#include "ShardCursor.h"
 #include <string>
 #include <vector>
 #include <time.h>
@@ -38,6 +38,7 @@ class History;
 struct HistoryConfig
 {
 	std::string StorageFolder;
+	int TimePerShard;
 };
 
 class Query
@@ -71,9 +72,9 @@ public:
 	~History();
 	
 	bool Init(HistoryConfig Cfg);	
-	DStore GetShard(time_t tm);
-	DStore GetNextShard(time_t tm);
-	DStore GetNextStore(DStore S);
+	DStore GetShard(time_t tm, bool create);
+	DStore GetNextShard(time_t tm);	
+	PCursor GetNextShardWith(time_t tm,const char *series);
 
 	bool RecordValue(const char* name, double Value);
 	bool RecordValue(const char* name, double Value, time_t Stamp);
@@ -83,7 +84,8 @@ public:
 	QueryCursor* GetHistory(AggregatedQuery Q);
 
 protected:
-	std::string StoragePath;	
+	std::string StoragePath;
+	int TimePerShard;
 	vector<DStore> OpenShards;
 
 private:

@@ -9,6 +9,8 @@
 #ifndef PCH_H
 #define PCH_H
 
+#undef _HAS_STD_BYTE
+
 // TODO: add headers that you want to pre-compile here
 #define NULL 0
 
