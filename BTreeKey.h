@@ -20,6 +20,9 @@
 
 #pragma once
 
+#define KEYCODE_DELETED  128
+#define KEYCODE_NULL 1
+
 #include <fstream>
 
 class DataStore;
@@ -38,8 +41,10 @@ public:
 	void Set(const void* k, const void* v);
 	const void* Payload();
 	const void* Key();
+	unsigned char Code();
 	int CompareTo(BTreeKey* Key);
 	int CompareTo(const void* Key);
+	void Delete();
 protected:
 	BTreeKeyTemplate *_template;
 	char *_buffer;

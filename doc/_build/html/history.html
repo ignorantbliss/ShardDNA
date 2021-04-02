@@ -1,0 +1,429 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>History &mdash; ShardDNA 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="SeriesInfo" href="seriesinfo.html" />
+    <link rel="prev" title="Class Index" href="allclasses.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ShardDNA
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="allclasses.html">Class Index</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">History</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="seriesinfo.html">SeriesInfo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="shardcursor.html">ShardCursor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="querycursor.html">QueryCursor</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ShardDNA</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="allclasses.html">Class Index</a> &raquo;</li>
+        
+      <li>History</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/history.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="history">
+<h1>History<a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<p>The History class is used to record and access historical time-series data.</p>
+<dl class="cpp class">
+<dt id="_CPPv47History">
+<span id="_CPPv37History"></span><span id="_CPPv27History"></span><span id="History"></span><span class="target" id="class_history"></span><em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">History</span></code><a class="headerlink" href="#_CPPv47History" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Represents your time-series history. </p>
+<p>This is the core ShardDNA class - it allows you to create historical storage and read and write time-series data. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt id="_CPPv4N7History4InitE13HistoryConfig">
+<span id="_CPPv3N7History4InitE13HistoryConfig"></span><span id="_CPPv2N7History4InitE13HistoryConfig"></span><span id="History::Init__HistoryConfig"></span><span class="target" id="class_history_1a2d4b220966c26a7fa915eabdac7475d9"></span><span class="pre">bool</span> <code class="sig-name descname"><span class="pre">Init</span></code><span class="sig-paren">(</span><span class="pre">HistoryConfig</span> <em><span class="pre">Cfg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7History4InitE13HistoryConfig" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Initialises a <a class="reference internal" href="#class_history"><span class="std std-ref">History</span></a> object. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Returns true if successful, otherwise false </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Cfg</span></code>: Configuration details for this historian </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N7History8GetShardE9TIMESTAMPb">
+<span id="_CPPv3N7History8GetShardE9TIMESTAMPb"></span><span id="_CPPv2N7History8GetShardE9TIMESTAMPb"></span><span id="History::GetShard__TIMESTAMP.b"></span><span class="target" id="class_history_1aff1ef29130133780a70736aef6ad7649"></span><span class="pre">DStore</span> <code class="sig-name descname"><span class="pre">GetShard</span></code><span class="sig-paren">(</span><span class="pre">TIMESTAMP</span> <em><span class="pre">tm</span></em>, <span class="pre">bool</span> <em><span class="pre">create</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7History8GetShardE9TIMESTAMPb" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Gets a shard that covers the specified time frame. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>A smart-pointer to data store, or ‘null’ if the call fails. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">tm</span></code>: The time-frame for the shard </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">create</span></code>: If true, the shard is created if it doesn’t already exist. </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N7History12GetNextShardE9TIMESTAMP">
+<span id="_CPPv3N7History12GetNextShardE9TIMESTAMP"></span><span id="_CPPv2N7History12GetNextShardE9TIMESTAMP"></span><span id="History::GetNextShard__TIMESTAMP"></span><span class="target" id="class_history_1a9af0bedfc77854e78108700fbcc3b4a1"></span><span class="pre">DStore</span> <code class="sig-name descname"><span class="pre">GetNextShard</span></code><span class="sig-paren">(</span><span class="pre">TIMESTAMP</span> <em><span class="pre">tm</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7History12GetNextShardE9TIMESTAMP" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Gets the NEXT shard based on a time frame. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>A smart-pointer to data store, or ‘null’ if the call fails. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">tm</span></code>: The time-frame for the shard </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N7History16GetNextShardWithE9TIMESTAMPPKc">
+<span id="_CPPv3N7History16GetNextShardWithE9TIMESTAMPPKc"></span><span id="_CPPv2N7History16GetNextShardWithE9TIMESTAMPPKc"></span><span id="History::GetNextShardWith__TIMESTAMP.cCP"></span><span class="target" id="class_history_1a07420585ab456c5d6a7825fb17fb0e42"></span><span class="pre">PCursor</span> <code class="sig-name descname"><span class="pre">GetNextShardWith</span></code><span class="sig-paren">(</span><span class="pre">TIMESTAMP</span> <em><span class="pre">tm</span></em>, <em class="property"><span class="pre">const</span></em> <span class="pre">char</span> <span class="pre">*</span><em><span class="pre">series</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7History16GetNextShardWithE9TIMESTAMPPKc" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Gets the NEXT shard based on a time frame and a series name. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>A smart-pointer to data store, or ‘null’ if the call fails. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">tm</span></code>: The time-frame for the shard </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">series</span></code>: The name/code of the time-series </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N7History12SeriesExistsEPKc">
+<span id="_CPPv3N7History12SeriesExistsEPKc"></span><span id="_CPPv2N7History12SeriesExistsEPKc"></span><span id="History::SeriesExists__cCP"></span><span class="target" id="class_history_1a4e4b7dbe79673bdbd2d737e89522e779"></span><span class="pre">bool</span> <code class="sig-name descname"><span class="pre">SeriesExists</span></code><span class="sig-paren">(</span><em class="property"><span class="pre">const</span></em> <span class="pre">char</span> <span class="pre">*</span><em><span class="pre">name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7History12SeriesExistsEPKc" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Checks if a particular time series exists. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Returns true if the series exists, otherwise false </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code>: The name/code for the time-series </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N7History9GetSeriesEPKcP10SeriesInfo">
+<span id="_CPPv3N7History9GetSeriesEPKcP10SeriesInfo"></span><span id="_CPPv2N7History9GetSeriesEPKcP10SeriesInfo"></span><span id="History::GetSeries__cCP.SeriesInfoP"></span><span class="target" id="class_history_1a89972f93a2b5ab057c27a8f25619fb7a"></span><a class="reference internal" href="seriesinfo.html#_CPPv410SeriesInfo" title="SeriesInfo"><span class="pre">SeriesInfo</span></a> <code class="sig-name descname"><span class="pre">GetSeries</span></code><span class="sig-paren">(</span><em class="property"><span class="pre">const</span></em> <span class="pre">char</span> <span class="pre">*</span><em><span class="pre">name</span></em>, <a class="reference internal" href="seriesinfo.html#_CPPv410SeriesInfo" title="SeriesInfo"><span class="pre">SeriesInfo</span></a> <span class="pre">*</span><em><span class="pre">SI</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7History9GetSeriesEPKcP10SeriesInfo" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Gets or sets the <a class="reference internal" href="seriesinfo.html#class_series_info"><span class="std std-ref">SeriesInfo</span></a> for a named series. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p></p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code>: The name/code of the time-series </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SI</span></code>: The <a class="reference internal" href="seriesinfo.html#class_series_info"><span class="std std-ref">SeriesInfo</span></a> to write if the series doesn’t exist, or NULL if it should not create the series. </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N7History11RecordValueEPKcd">
+<span id="_CPPv3N7History11RecordValueEPKcd"></span><span id="_CPPv2N7History11RecordValueEPKcd"></span><span id="History::RecordValue__cCP.double"></span><span class="target" id="class_history_1a1adfbc7b6306abea972c94be3cfb5e77"></span><span class="pre">bool</span> <code class="sig-name descname"><span class="pre">RecordValue</span></code><span class="sig-paren">(</span><em class="property"><span class="pre">const</span></em> <span class="pre">char</span> <span class="pre">*</span><em><span class="pre">name</span></em>, <span class="pre">double</span> <em><span class="pre">Value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7History11RecordValueEPKcd" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Record a value at the current time, with no options. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Returns true if successful, otherwise false. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code>: The name/code of the time-series </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Value</span></code>: The value to write </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N7History11RecordValueEPKcd9TIMESTAMPi">
+<span id="_CPPv3N7History11RecordValueEPKcd9TIMESTAMPi"></span><span id="_CPPv2N7History11RecordValueEPKcd9TIMESTAMPi"></span><span id="History::RecordValue__cCP.double.TIMESTAMP.i"></span><span class="target" id="class_history_1ad7e1a1686a9e6bd3f16ea2bace15ecb3"></span><span class="pre">bool</span> <code class="sig-name descname"><span class="pre">RecordValue</span></code><span class="sig-paren">(</span><em class="property"><span class="pre">const</span></em> <span class="pre">char</span> <span class="pre">*</span><em><span class="pre">name</span></em>, <span class="pre">double</span> <em><span class="pre">Value</span></em>, <span class="pre">TIMESTAMP</span> <em><span class="pre">Stamp</span></em>, <span class="pre">int</span> <em><span class="pre">Options</span></em> <span class="pre">=</span> <span class="pre">0</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7History11RecordValueEPKcd9TIMESTAMPi" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Records a value to the Time-Series. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Returns true if successful, otherwise false </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code>: The name/code for the time-series </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Value</span></code>: The value to record </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Stamp</span></code>: The time-stamp to write to </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Options</span></code>: Any options regarding this write (currently unused) </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N7History9GetLatestEPKc">
+<span id="_CPPv3N7History9GetLatestEPKc"></span><span id="_CPPv2N7History9GetLatestEPKc"></span><span id="History::GetLatest__cCP"></span><span class="target" id="class_history_1a4978d6e4aa1f6789bedf2317387a44e6"></span><span class="pre">TSPoint</span> <code class="sig-name descname"><span class="pre">GetLatest</span></code><span class="sig-paren">(</span><em class="property"><span class="pre">const</span></em> <span class="pre">char</span> <span class="pre">*</span><em><span class="pre">name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7History9GetLatestEPKc" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Returns the latest value for a given series Note that this function heavily accesses the hard-drive and is NOT intended for polling or other routine checking for live data. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Returns true if successful, otherwise false </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code>: The name/code for the time-series </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N7History10GetHistoryEPKc9TIMESTAMP9TIMESTAMP">
+<span id="_CPPv3N7History10GetHistoryEPKc9TIMESTAMP9TIMESTAMP"></span><span id="_CPPv2N7History10GetHistoryEPKc9TIMESTAMP9TIMESTAMP"></span><span id="History::GetHistory__cCP.TIMESTAMP.TIMESTAMP"></span><span class="target" id="class_history_1a4fd1004cf4602c7b7e97727333f0c76f"></span><a class="reference internal" href="shardcursor.html#_CPPv411ShardCursor" title="ShardCursor"><span class="pre">ShardCursor</span></a> <span class="pre">*</span><code class="sig-name descname"><span class="pre">GetHistory</span></code><span class="sig-paren">(</span><em class="property"><span class="pre">const</span></em> <span class="pre">char</span> <span class="pre">*</span><em><span class="pre">name</span></em>, <span class="pre">TIMESTAMP</span> <em><span class="pre">from</span></em>, <span class="pre">TIMESTAMP</span> <em><span class="pre">to</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7History10GetHistoryEPKc9TIMESTAMP9TIMESTAMP" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get history for a single channel. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>returns a <a class="reference internal" href="shardcursor.html#class_shard_cursor"><span class="std std-ref">ShardCursor</span></a> to navigate the results </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code>: The name/code for the time-series </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">from</span></code>: The date to begin the query </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">to</span></code>: The date to end the query (otherwise 0) </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N7History10GetHistoryE5Query">
+<span id="_CPPv3N7History10GetHistoryE5Query"></span><span id="_CPPv2N7History10GetHistoryE5Query"></span><span id="History::GetHistory__Query"></span><span class="target" id="class_history_1ae3351f70fef75317277891f13a34e2bf"></span><a class="reference internal" href="querycursor.html#_CPPv411QueryCursor" title="QueryCursor"><span class="pre">QueryCursor</span></a> <span class="pre">*</span><code class="sig-name descname"><span class="pre">GetHistory</span></code><span class="sig-paren">(</span><span class="pre">Query</span> <em><span class="pre">Q</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7History10GetHistoryE5Query" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get the raw history for one or more channels. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>returns a <a class="reference internal" href="querycursor.html#class_query_cursor"><span class="std std-ref">QueryCursor</span></a> to navigate the results </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Q</span></code>: The Query object containing query details </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N7History10GetHistoryE15AggregatedQuery">
+<span id="_CPPv3N7History10GetHistoryE15AggregatedQuery"></span><span id="_CPPv2N7History10GetHistoryE15AggregatedQuery"></span><span id="History::GetHistory__AggregatedQuery"></span><span class="target" id="class_history_1a70fcb3b54fd77dc35973b8b987c3ff0e"></span><a class="reference internal" href="querycursor.html#_CPPv411QueryCursor" title="QueryCursor"><span class="pre">QueryCursor</span></a> <span class="pre">*</span><code class="sig-name descname"><span class="pre">GetHistory</span></code><span class="sig-paren">(</span><span class="pre">AggregatedQuery</span> <em><span class="pre">Q</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7History10GetHistoryE15AggregatedQuery" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get the aggregated/interpolated history for one or more channels. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>returns a <a class="reference internal" href="querycursor.html#class_query_cursor"><span class="std std-ref">QueryCursor</span></a> to navigate the results </p>
+</dd>
+<dt><strong>Warning</strong></dt><dd><p>Not yet implemented </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Q</span></code>: The AggregatedQuery object containing query details </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N7History16ShardDiagnosticsEv">
+<span id="_CPPv3N7History16ShardDiagnosticsEv"></span><span id="_CPPv2N7History16ShardDiagnosticsEv"></span><span id="History::ShardDiagnostics"></span><span class="target" id="class_history_1a908b2f47c90e36019d61216256862e4d"></span><span class="pre">void</span> <code class="sig-name descname"><span class="pre">ShardDiagnostics</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7History16ShardDiagnosticsEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Internal function to display all shards on standard output </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="seriesinfo.html" class="btn btn-neutral float-right" title="SeriesInfo" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="allclasses.html" class="btn btn-neutral float-left" title="Class Index" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Steven Harding.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

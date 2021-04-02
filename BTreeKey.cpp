@@ -85,6 +85,16 @@ const void* BTreeKey::Key()
 	return _buffer;
 }
 
+unsigned char BTreeKey::Code()
+{
+	return _code;
+}
+
+void BTreeKey::Delete()
+{
+	_code |= KEYCODE_DELETED;	
+}
+
 BTreeKeyTemplate::BTreeKeyTemplate()
 {
 	KeySize = 32;

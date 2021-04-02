@@ -32,6 +32,8 @@
 #define BTREE_SEARCH_PREVIOUS	1
 //Search should result in the closest, next match unless there is an exact match.
 #define BTREE_SEARCH_NEXT	2
+//As BTREE_SEARCH_NEXTEXC, but will NOT exact match.
+#define BTREE_SEARCH_NEXTEXC	3
 
 #define PBTREE std::shared_ptr<BTree>
 

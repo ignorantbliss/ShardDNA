@@ -62,61 +62,67 @@ void Cursor::SetEndpoint(TIMESTAMP ep)
 
 int Cursor::Next()
 {
-	//If we have reached the end, return false.
-	if (this->EoF == true)
-		return CURSOR_END;
-
-	if (Active == NULL)
+	while (true)
 	{
-		//First usage of this cursor. Load content.
-		Active = new BTreeNode(Tree);
-		Active->Load(Tree->DS.get(), Offset);
-		if (Index == -1)
-			Index = 0;
-		if (Active->KeyCount() == 0)
-		{
+		//If we have reached the end, return false.
+		if (this->EoF == true)
 			return CURSOR_END;
-		}
-		return CURSOR_PRE;
-	}
-	else
-	{
-		Index++;
 
-		//Check to see if we need the next node...
-		if (Index >= Active->KeyCount())
-		{			
-			//Destroy the current node.
-			TIMESTAMP Current = *((TIMESTAMP*)Active->Keys[Index-1]->Key());
-			std::streamoff NextPos = Active->Next;
-			delete Active;
-			Active = NULL;
-
-			Offset = NextPos;
-
-			if (Offset != 0)
-			{
-				//Load the next node.
-				Active = new BTreeNode(Tree);
-				Active->Load(Tree->DS.get(), Offset);
+		if (Active == NULL)
+		{
+			//First usage of this cursor. Load content.
+			Active = new BTreeNode(Tree);
+			Active->Load(Tree->DS.get(), Offset);
+			if (Index == -1)
 				Index = 0;
-			}
-			else
+			if (Active->KeyCount() == 0)
 			{
-				EoF = true;				
+				return CURSOR_END;
 			}
-		}		
+			return CURSOR_PRE;
+		}
+		else
+		{
+			Index++;
+
+			//Check to see if we need the next node...
+			if (Index >= Active->KeyCount())
+			{
+				//Destroy the current node.
+				TIMESTAMP Current = *((TIMESTAMP*)Active->Keys[Index - 1]->Key());
+				std::streamoff NextPos = Active->Next;
+				delete Active;
+				Active = NULL;
+
+				Offset = NextPos;
+
+				if (Offset != 0)
+				{
+					//Load the next node.
+					Active = new BTreeNode(Tree);
+					Active->Load(Tree->DS.get(), Offset);
+					Index = 0;
+				}
+				else
+				{
+					EoF = true;
+				}
+			}
+		}
+
+		if (EoF == true)
+			return CURSOR_END;
+
+		TIMESTAMP tm = *(TIMESTAMP*)Active->Keys[Index]->Payload();
+		if ((EndPoint > 0) && (tm > EndPoint))
+		{
+			EoF = true;
+			return CURSOR_POST;
+		}
+
+		if (Active->Keys[Index]->Code() & KEYCODE_DELETED == 0)
+			break;
 	}
-
-	if (EoF == true)
-		return CURSOR_END;
-
-	TIMESTAMP tm = *(TIMESTAMP*)Active->Keys[Index]->Payload();
-	if ((EndPoint > 0) && (tm > EndPoint))
-	{
-		EoF = true;
-		return CURSOR_POST;
-	}	
 	return CURSOR_OK;
 }
 
@@ -136,6 +142,12 @@ const void * Cursor::Value()
 		return NULL;
 	}
 	return Active->Keys[Index]->Payload();	
+}
+
+void Cursor::Delete(bool WriteNow)
+{
+	Active->Keys[Index]->Delete();
+	if (WriteNow == true) Active->Write();
 }
 
 void Cursor::End()

@@ -55,13 +55,14 @@ public:
 
 	void SetPosition(std::streamoff Position, int Index);	
 	void SetTree(std::shared_ptr<BTree> tr);
-	void SetEndpoint(TIMESTAMP t);
+	void SetEndpoint(TIMESTAMP t);	
 	//void SetParent(History* H);
 	//void SetSeries(std::string S);
 
 	int Next();
 	const void *Key();
 	const void *Value();	
+	void Delete(bool WriteNow = true);
 	//int NextStepCost();
 
 	void End();

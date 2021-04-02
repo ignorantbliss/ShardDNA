@@ -190,12 +190,15 @@ bool BTreeNode::_Search(const void* key, int mode, BTreeSearchChain* Chain)
 	{
 		if (Keys[x] != NULL)
 		{
+			if ((Keys[x]->Code() & KEYCODE_DELETED) > 0)
+				continue;
+
 			cmp = Keys[x]->CompareTo(key);			
 
 			if (cmp == 0)
 			{
-				//if ((mode != BTREE_SEARCH_NEXT) || ((leaf == false) && (mode == BTREE_SEARCH_NEXT)))
-				//{
+				if ((mode != BTREE_SEARCH_NEXTEXC) || ((leaf == false) && (mode == BTREE_SEARCH_NEXTEXC)))
+				{
 					if (leaf == true)
 					{
 						Closest = Keys[x];
@@ -208,7 +211,7 @@ bool BTreeNode::_Search(const void* key, int mode, BTreeSearchChain* Chain)
 						ClosestIndex = x;
 						break;
 					}
-				//}
+				}
 			}
 			if (cmp < 0)
 			{
@@ -231,7 +234,7 @@ bool BTreeNode::_Search(const void* key, int mode, BTreeSearchChain* Chain)
 					ClosestIndex = x-1;
 					break;
 				}
-				if (mode == BTREE_SEARCH_NEXT)
+				if ((mode == BTREE_SEARCH_NEXT) || (mode == BTREE_SEARCH_NEXTEXC))
 				{
 					Closest = Keys[x];					
 					ClosestIndex = x;
@@ -277,7 +280,7 @@ bool BTreeNode::_Search(const void* key, int mode, BTreeSearchChain* Chain)
 		}
 		else
 		{
-			if ((mode == BTREE_SEARCH_PREVIOUS) || (mode == BTREE_SEARCH_NEXT))
+			if ((mode == BTREE_SEARCH_PREVIOUS) || (mode == BTREE_SEARCH_NEXT) || (mode == BTREE_SEARCH_NEXTEXC))
 			{
 				Chain->Key = new BTreeKey(*Closest);				
 				Chain->sequence[Chain->sequence.size() - 1].index = ClosestIndex + 1;
