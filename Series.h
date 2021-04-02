@@ -3,27 +3,18 @@
 #include <vector>
 #include "BTree.h"
 #include "DataStore.h"
-#include "Historian.h"
+
+#define TIMESTAMP time_t
+
 using namespace std;
 
-class SeriesLocation
-{
-	//ShardHandle *DStore;
-	std::vector<std::streamoff> Offsets;
-	BTree Node;
-};
-
-class Series
+#pragma pack(push, 1)
+class SeriesInfo
 {
 public:
-	Series();
-
-	std::string Name;
-	bool Loaded;
-	double RecentValue;
-	time_t RecentTimestamp;
-
-	SeriesLocation Location;
-
+	SeriesInfo();
+	
+	int Options;
+	TIMESTAMP FirstSample;	
 };
-
+#pragma pack(pop)

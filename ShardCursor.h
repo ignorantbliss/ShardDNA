@@ -17,13 +17,13 @@ public:
 	int NextStepCost();
 
 	int Next();
-	time_t Timestamp();
+	TIMESTAMP Timestamp();
 	double Value();
 protected:
 	std::string Series;
 	PCursor ActiveCursor;
 	History* Hist;
 	bool EoF;
-	time_t LastTimestamp;
+	TIMESTAMP LastTimestamp;
 };
 

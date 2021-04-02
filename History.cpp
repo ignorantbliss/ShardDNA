@@ -3,6 +3,7 @@
 #include "BTree.h"
 #include "Cursor.h"
 #include "QueryCursor.h"
+#include "Series.h"
 
 #include <string>
 #include <iostream>
@@ -37,13 +38,13 @@ bool History::Init(HistoryConfig HC)
 	ShardStorage.reset(new DataStore());
 	if (ShardStorage->OpenOrCreate((StoragePath + "/shard.index").c_str()) == false)
 	{
-		Logger::Global.Log(LOGLEVEL_CRITICAL, "Historian", "Shard Storage File Could Not Be Opened");
+		//Logger::Global.Log(LOGLEVEL_CRITICAL, "Historian", "Shard Storage File Could Not Be Opened");
 		return false;
 	}
 
-	Logger::Global.Log(LOGLEVEL_INFO, "Historian", "Loaded Shard Index File");
+	//Logger::Global.Log(LOGLEVEL_INFO, "Historian", "Loaded Shard Index File");
 	Shards = std::shared_ptr<BTree>(new BTree());
-	Shards->LeafTemplate.KeySize = sizeof(time_t);
+	Shards->LeafTemplate.KeySize = sizeof(TIMESTAMP);
 	Shards->BranchTemplate.KeySize = sizeof(long long);
 	Shards->LeafTemplate.PayloadSize = 12;
 	Shards->BranchTemplate.PayloadSize = sizeof(std::streamoff);
@@ -52,12 +53,63 @@ bool History::Init(HistoryConfig HC)
 	
 	ShardStorage->Init();
 	Shards->Load(ShardStorage, ShardStorage->BlockIndexToOffset(1));
+
+	SeriesStorage.reset(new DataStore());
+	if (SeriesStorage->OpenOrCreate((StoragePath + "/series.index").c_str()) == false)
+	{
+		//Logger::Global.Log(LOGLEVEL_CRITICAL, "Historian", "Shard Storage File Could Not Be Opened");
+		return false;
+	}
+
+	Series = std::shared_ptr<BTree>(new BTree());
+	Series->LeafTemplate.KeySize = 32;
+	Series->BranchTemplate.KeySize = 32;
+	Series->LeafTemplate.PayloadSize = sizeof(SeriesInfo);
+	Series->BranchTemplate.PayloadSize = sizeof(std::streamoff);	
+
+	SeriesStorage->Init();
+	Series->Load(SeriesStorage, SeriesStorage->BlockIndexToOffset(1));
+
 	return true;
+}
+
+bool History::SeriesExists(const char* series)
+{
+	SeriesInfo SI = GetSeries(series, NULL);
+	if (SI.FirstSample > 0)
+		return true;
+	return false;
+}
+
+SeriesInfo History::GetSeries(const char* series,SeriesInfo *SI)
+{	
+	SeriesInfo S;	
+	BTreeKey *Key = Series->PointSearch(series, strlen(series), BTREE_SEARCH_EXACT);
+	if (Key != NULL)
+	{
+		memcpy(&S, Key->Payload(), sizeof(SeriesInfo));
+		delete Key;
+	}
+	else
+	{
+		if (SI != NULL)
+		{
+			S.FirstSample = SI->FirstSample;
+			S.Options = SI->Options;
+			Series->Add(series, strlen(series), SI, sizeof(SeriesInfo));			
+		}
+	}
+	return S;
 }
 
 TSPoint History::GetLatest(const char* series)
 {
 	time_t CurrentTime = time(NULL);
+	SeriesInfo SI = GetSeries(series,NULL);
+	if (SI.FirstSample == 0)
+	{
+		return TSPoint::NullValue();
+	}
 
 	//DStore Shard = GetShard(CurrentTime);
 	DStore ActiveShard = GetShard(CurrentTime,false);
@@ -74,8 +126,8 @@ TSPoint History::GetLatest(const char* series)
 	}
 
 	BTree Timeseries;
-	Timeseries.LeafTemplate.KeySize = sizeof(time_t);
-	Timeseries.BranchTemplate.KeySize = sizeof(time_t);
+	Timeseries.LeafTemplate.KeySize = sizeof(TIMESTAMP);
+	Timeseries.BranchTemplate.KeySize = sizeof(TIMESTAMP);
 	Timeseries.LeafTemplate.PayloadSize = sizeof(double);
 	Timeseries.BranchTemplate.PayloadSize = sizeof(std::streamoff);
 	Timeseries.LeafTemplate.CompareInverse = true;
@@ -100,7 +152,7 @@ TSPoint History::GetLatest(const char* series)
 	Key = Timeseries.PointSearch(&CurrentTime, sizeof(CurrentTime), BTREE_SEARCH_PREVIOUS);
 	if (Key == NULL)
 	{
-		return TSPoint::NullValue();;
+		return TSPoint::NullValue();
 	}
 
 	TSPoint P(Key);
@@ -108,19 +160,44 @@ TSPoint History::GetLatest(const char* series)
 	return P;
 }
 
-ShardCursor* History::GetHistory(const char* series, time_t from, time_t to)
+DStore History::GetStore(const char* storename)
 {
+	std::string store = storename;
+	for (unsigned int x = 0; x < OpenShards.size(); x++)
+	{
+		if (OpenShards[x]->FileName() == store)
+		{
+			return OpenShards[x];
+		}
+	}
 
-	time_t CurrentTime = from;
-	//std::vector<TSPoint> Points;
+	DataStore* ActiveShard = new DataStore();
+	ActiveShard->OpenOrCreate(storename);
+	ActiveShard->Init();
+	std::shared_ptr<DataStore> Store(ActiveShard);
+	OpenShards.push_back(Store);
+	return Store;
+}
 
+ShardCursor* History::GetHistory(const char* series, TIMESTAMP from, TIMESTAMP to)
+{	
+	SeriesInfo SI = GetSeries(series,NULL);
+	if (SI.FirstSample == 0)
+	{
+		return NULL;
+	}
+	if (from < SI.FirstSample)
+	{
+		from = SI.FirstSample;
+	}
+
+	TIMESTAMP CurrentTime = from;
 	DStore ActiveShard = GetShard(CurrentTime,false);
 	PBTREE PointList = std::shared_ptr<BTree>(new BTree());
 	PointList->LeafTemplate.KeySize = 32;
 	PointList->BranchTemplate.KeySize = 32;
 	PointList->LeafTemplate.PayloadSize = sizeof(std::streamoff);
-	PointList->BranchTemplate.PayloadSize = sizeof(std::streamoff);
-	//SetContext("Request");
+	PointList->BranchTemplate.PayloadSize = sizeof(std::streamoff);	
 	ActiveShard->Init();
 	if (!PointList->Load(ActiveShard, ActiveShard->BlockIndexToOffset(1)))
 	{
@@ -128,8 +205,8 @@ ShardCursor* History::GetHistory(const char* series, time_t from, time_t to)
 	}
 
 	std::shared_ptr<BTree> Timeseries(new BTree());
-	Timeseries->LeafTemplate.KeySize = sizeof(time_t);
-	Timeseries->BranchTemplate.KeySize = sizeof(time_t);
+	Timeseries->LeafTemplate.KeySize = sizeof(TIMESTAMP);
+	Timeseries->BranchTemplate.KeySize = sizeof(TIMESTAMP);
 	Timeseries->LeafTemplate.PayloadSize = sizeof(double);
 	Timeseries->BranchTemplate.PayloadSize = sizeof(std::streamoff);
 	Timeseries->LeafTemplate.CompareInverse = true;
@@ -162,9 +239,10 @@ ShardCursor* History::GetHistory(const char* series, time_t from, time_t to)
 QueryCursor* History::GetHistory(Query Q)
 {
 	QueryCursor* Cursor = new QueryCursor();
-	for (long x = 0; x < Q.Channels.size(); x++)
+	for (unsigned int x = 0; x < Q.Channels.size(); x++)
 	{
-		Cursor->AddChannel(std::shared_ptr<ShardCursor>(GetHistory(Q.Channels[x].c_str(), Q.from, Q.to)));
+		std::shared_ptr<ShardCursor> Csr = std::shared_ptr<ShardCursor>(GetHistory(Q.Channels[x].c_str(), Q.from, Q.to));		
+		Cursor->AddChannel(Csr);
 	}
 	return Cursor;
 }
@@ -174,11 +252,21 @@ QueryCursor* History::GetHistory(AggregatedQuery Q)
 	return NULL;
 }
 
-bool History::RecordValue(const char* series, double Value, time_t CurrentTime)
+bool History::RecordValue(const char* series, double Value, TIMESTAMP CurrentTime, int Options)
 {
 	//Step 1 - Identify Shard...
 
 	DStore ActiveShard = GetShard(CurrentTime,true);
+
+	SeriesInfo Original;
+	Original.FirstSample = CurrentTime;
+	Original.Options = 0;
+
+	SeriesInfo SI = GetSeries(series, &Original);
+	if (SI.FirstSample == 0)
+	{
+		return NULL;
+	}	
 
 	PBTREE PointList = std::shared_ptr<BTree>(new BTree);
 	PointList->LeafTemplate.KeySize = 32;
@@ -190,15 +278,16 @@ bool History::RecordValue(const char* series, double Value, time_t CurrentTime)
 	if (!PointList->Load(ActiveShard, ActiveShard->BlockIndexToOffset(1)))
 	{
 		return false;
-	}
-
-	//BTree Timeseries;
+	}	
+	
 	PBTREE Timeseries = std::shared_ptr<BTree>(new BTree);
-	Timeseries->LeafTemplate.KeySize = sizeof(time_t);
-	Timeseries->BranchTemplate.KeySize = sizeof(time_t);
+	Timeseries->LeafTemplate.KeySize = sizeof(TIMESTAMP);
+	Timeseries->BranchTemplate.KeySize = sizeof(TIMESTAMP);
 	Timeseries->LeafTemplate.PayloadSize = sizeof(double);
 	Timeseries->BranchTemplate.PayloadSize = sizeof(std::streamoff);
 	Timeseries->SplitMode = BTREE_SPLITMODE_END;
+	Timeseries->LeafTemplate.CompareInverse = true;
+	Timeseries->BranchTemplate.CompareInverse = true;
 	std::streamoff offset = 0;
 
 	BTreeKey* Key = PointList->PointSearch(series, strlen(series), BTREE_SEARCH_EXACT);
@@ -219,7 +308,7 @@ bool History::RecordValue(const char* series, double Value, time_t CurrentTime)
 	}
 
 	//cout << "ADDING TO TIME SERIES" << endl;
-	Timeseries->Add((const char*)&CurrentTime, sizeof(time_t), (const char*)&Value, sizeof(Value));
+	Timeseries->Add((const char*)&CurrentTime, sizeof(TIMESTAMP), (const char*)&Value, sizeof(Value));
 
 
 	return false;
@@ -228,12 +317,12 @@ bool History::RecordValue(const char* series, double Value, time_t CurrentTime)
 bool History::RecordValue(const char* series, double Value)
 {
 	//Step 1 - Identify Shard...
-	time_t CurrentTime = time(NULL);
+	TIMESTAMP CurrentTime = time(NULL);
 
 	return RecordValue(series, Value, CurrentTime);
 }
 
-std::string ShardNameFromDate(time_t tmx)
+std::string ShardNameFromDate(TIMESTAMP tmx)
 {
 	char buf[13];
 	tm* t = localtime(&tmx);
@@ -241,40 +330,52 @@ std::string ShardNameFromDate(time_t tmx)
 	return buf;
 }
 
-std::shared_ptr<DataStore> History::GetShard(time_t date,bool create)
+std::shared_ptr<DataStore> History::GetShard(TIMESTAMP date,bool create)
 {
 	//char shardname[32];
 	char shardname[13];
 	memset(shardname, 0, 13);
 
-	time_t CurrentTime = date;
-	BTreeKey* Key = Shards->PointSearch((const char*)&CurrentTime, sizeof(time_t), BTREE_SEARCH_PREVIOUS);
+	//cout << "Requesting Shard for " << date << endl;
+
+	TIMESTAMP CurrentTime = date;
+	BTreeKey* Key = Shards->PointSearch((const char*)&CurrentTime, sizeof(TIMESTAMP), BTREE_SEARCH_PREVIOUS);
 	if (Key == NULL)
 	{
 		std::string SN = ShardNameFromDate(CurrentTime);
-		Key = Shards->Add((const char*)&CurrentTime, sizeof(time_t), SN.c_str(), SN.size());		
+		Shards->Add((const char*)&CurrentTime, sizeof(TIMESTAMP), SN.c_str(), SN.size());
 		memcpy(shardname, SN.c_str(), SN.size());
 	}
 	else
 	{
-		time_t basis = *(time_t*)Key->Key();
+		TIMESTAMP basis = *(TIMESTAMP*)Key->Key();
 		memcpy(shardname, Key->Payload(), 12);
+		//cout << "Closest Shard is " << shardname << " for "<< basis << endl;
 		if (create == true)
 		{
 			if (basis > CurrentTime)
 			{				
 				std::string SN = ShardNameFromDate(CurrentTime);
-				Key = Shards->Add((const char*)&CurrentTime, sizeof(time_t), SN.c_str(), SN.size());
+				Shards->Add((const char*)&CurrentTime, sizeof(TIMESTAMP), SN.c_str(), SN.size());
 				memcpy(shardname, SN.c_str(), SN.size());				
 			}
 			else
 			{
 				if ((CurrentTime - basis) > TimePerShard)
-				{
-					CurrentTime -= ((CurrentTime - basis) % TimePerShard);
+				{					
+					int md = ((CurrentTime - basis) % TimePerShard);
+					CurrentTime -= md;
+					//cout << "New Shard Required - Corrected @ " << CurrentTime << endl;
 					std::string SN = ShardNameFromDate(CurrentTime);
-					Key = Shards->Add((const char*)&CurrentTime, sizeof(time_t), SN.c_str(), SN.size());
-					memcpy(shardname, SN.c_str(), SN.size());
+					if (Shards->Add((const char*)&CurrentTime, sizeof(TIMESTAMP), SN.c_str(), SN.size()))
+					{
+						memcpy(shardname, SN.c_str(), SN.size());
+					}
+					else
+					{
+						cout << "FAILURE: Could not add new shard record" << endl;
+						return std::shared_ptr<DataStore>(NULL);
+					}
 				}				
 			}
 		}
@@ -285,21 +386,18 @@ std::shared_ptr<DataStore> History::GetShard(time_t date,bool create)
 	Shd += shardname;
 	Shd += ".shard";
 
-	ActiveShard->OpenOrCreate(Shd.c_str());	
-	std::shared_ptr<DataStore> Store(ActiveShard);
-
-	/*if (Key != NULL)
-		delete Key;*/
-
+	
+	//ActiveShard->OpenOrCreate(Shd.c_str());	
+	std::shared_ptr<DataStore> Store = GetStore(Shd.c_str());
 	return Store;
 }
 
-std::shared_ptr<DataStore> History::GetNextShard(time_t date)
+std::shared_ptr<DataStore> History::GetNextShard(TIMESTAMP date)
 {
 	char shardname[32];
 
-	time_t CurrentTime = time(NULL);
-	BTreeKey* Key = Shards->PointSearch((const char*)&CurrentTime, sizeof(time_t), BTREE_SEARCH_NEXT);
+	TIMESTAMP CurrentTime = time(NULL);
+	BTreeKey* Key = Shards->PointSearch((const char*)&CurrentTime, sizeof(TIMESTAMP), BTREE_SEARCH_NEXT);
 	if (Key == NULL)
 	{
 		return NULL;
@@ -316,8 +414,7 @@ std::shared_ptr<DataStore> History::GetNextShard(time_t date)
 	Shd += shardname;
 	Shd += ".shard";
 
-	ActiveShard->OpenOrCreate(Shd.c_str());
-	std::shared_ptr<DataStore> Store(ActiveShard);
+	std::shared_ptr<DataStore> Store = GetStore(Shd.c_str());
 
 	return Store;
 }
@@ -326,35 +423,38 @@ std::shared_ptr<DataStore> History::GetNextShard(time_t date)
 #define MAX_PATH 1024
 #endif
 
-PCursor History::GetNextShardWith(time_t CurrentTime, const char *series)
+PCursor History::GetNextShardWith(TIMESTAMP CurrentTime, const char *series)
 {	
 	char shardname[13];
 	memset(shardname, 0, 13);
 	
 	while (true)
 	{
-		BTreeKey* Key = Shards->PointSearch((const char*)&CurrentTime, sizeof(time_t), BTREE_SEARCH_NEXT);
+		BTreeKey* Key = Shards->PointSearch((const char*)&CurrentTime, sizeof(TIMESTAMP), BTREE_SEARCH_NEXT);
 		if (Key == NULL)
 		{
+			//cout << "No Remaining Shards" << endl;
 			return NULL;
 		}
 		else
-		{
-			memcpy(shardname, Key->Payload(), 12);
+		{			
+			memcpy(shardname, Key->Payload(), 12);			
 			CurrentTime = *(time_t *)Key->Key();
-
-			DStore DS(new DataStore());	
+			
+			//cout << "Checking Shard " << shardname << " with Timestamp " <<CurrentTime<<endl;
+			
 			std::string ShardFile = StoragePath + "\\";
 			ShardFile += shardname;
 			ShardFile += ".shard";
+			DStore DS = GetStore(ShardFile.c_str());
 			
 			PBTREE PointList = std::shared_ptr<BTree>(new BTree());
 			PointList->LeafTemplate.KeySize = 32;
 			PointList->BranchTemplate.KeySize = 32;
 			PointList->LeafTemplate.PayloadSize = sizeof(std::streamoff);
 			PointList->BranchTemplate.PayloadSize = sizeof(std::streamoff);
-			DS->OpenOrCreate(ShardFile.c_str());
-			DS->Init();
+			//DS->OpenOrCreate(ShardFile.c_str());
+			//DS->Init();
 			if (!PointList->Load(DS, DS->BlockIndexToOffset(1)))
 			{
 				return NULL;
@@ -370,16 +470,16 @@ PCursor History::GetNextShardWith(time_t CurrentTime, const char *series)
 				Shd += shardname;
 				Shd += ".shard";
 
-				ActiveShard->OpenOrCreate(Shd.c_str());
-				ActiveShard->Init();
-				std::shared_ptr<DataStore> Store(ActiveShard);
+				std::shared_ptr<DataStore> Store = GetStore(Shd.c_str());
 
 				PBTREE Timeseries(new BTree());
 				Timeseries->LeafTemplate.KeySize = sizeof(time_t);
 				Timeseries->BranchTemplate.KeySize = sizeof(time_t);
 				Timeseries->LeafTemplate.PayloadSize = sizeof(double);
 				Timeseries->BranchTemplate.PayloadSize = sizeof(std::streamoff);
-				Timeseries->SplitMode = BTREE_SPLITMODE_END;
+				Timeseries->SplitMode = BTREE_SPLITMODE_END;				
+				Timeseries->LeafTemplate.CompareInverse = true;
+				Timeseries->BranchTemplate.CompareInverse = true;
 				std::streamoff offset = 0;
 				memcpy(&offset, Key->Payload(), sizeof(offset));
 				if (!Timeseries->Load(Store, offset))
@@ -392,11 +492,28 @@ PCursor History::GetNextShardWith(time_t CurrentTime, const char *series)
 			else
 			{
 				//Series isn't in this shard - let's continue.
+				cout << "Series Not Present In Shard" << endl;
+				CurrentTime++;
 			}
 		}
 	}
 
 	return NULL;
+}
+
+void History::ShardDiagnostics()
+{
+	PCursor C = Shards->FirstNode();
+	char buf[13];
+	memset(buf, 0, 13);
+	
+	while (C->Next() >= 0)
+	{
+		memcpy(buf, C->Value(), 12);
+		time_t T = (time_t)C->Key();
+
+		cout << "Shard " << buf << " @ " <<T << endl;
+	}
 }
 
 Query::Query()

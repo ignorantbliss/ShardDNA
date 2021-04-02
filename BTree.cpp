@@ -197,7 +197,7 @@ PCursor BTree::Search(const void* key, int ln, int mode)
 	}
 }
 
-BTreeKey* BTree::Add(const void* key, int kln, const void* value, int vln)
+bool BTree::Add(const void* key, int kln, const void* value, int vln)
 {
 	char* kfilled = NULL;
 	char* vfilled = NULL;
@@ -221,7 +221,7 @@ BTreeKey* BTree::Add(const void* key, int kln, const void* value, int vln)
 		vin = vfilled;
 	}
 
-	BTreeKey *k = _Add(kin, vin);
+	bool k = _Add(kin, vin);
 
 	if (kfilled != NULL)
 	{
@@ -234,11 +234,14 @@ BTreeKey* BTree::Add(const void* key, int kln, const void* value, int vln)
 	return k;
 }
 
-BTreeKey* BTree::_Add(const void* key, const void* val)
+bool BTree::_Add(const void* key, const void* val)
 {
 	BTreeSearchChain Chain = Root->Search(key, BTREE_SEARCH_PREVIOUS);	
 	if (Chain.Key != NULL)
+	{
 		delete Chain.Key;
+		Chain.Key = NULL;
+	}
 
 	if (Chain.found == false)
 	{
@@ -260,6 +263,7 @@ BTreeKey* BTree::_Add(const void* key, const void* val)
 			{
 				Root->Load(DS.get(),Root->position);
 			}
+			return true;
 		}		
 	}	
 	return NULL;

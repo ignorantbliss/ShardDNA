@@ -36,13 +36,31 @@ int main(int argv, const char **args)
 	
 	H.Init(HC);
 
-	//Hist.Log(LOGLEVEL_INFO, "Historian", "Intialisation Complete");
-	time_t CurrentTime = time(NULL);
-	/*for (int x = 0; x < 100; x++)
+	H.ShardDiagnostics();
+
+	TIMESTAMP CurrentTime = time(NULL) - 120;
+	if (!H.SeriesExists("HELLO"))
+	{		
+		cout << "Writing 100 Rows In The Past" << endl;
+		for (int x = 0; x < 100; x++)
+		{
+			H.RecordValue("HELLO", x + 1, CurrentTime + (time_t)x);
+		}
+	}
+
+	CurrentTime = time(NULL);
+
+	if (!H.SeriesExists("GOODBYE"))
 	{
-		H.RecordValue("GOODBYE", x+1,CurrentTime + (time_t)x);
-	}*/
-	ShardCursor* Csr = H.GetHistory("HELLO", 0, CurrentTime);
+		cout << "Writing 100 Rows In The Future" << endl;
+		for (int x = 0; x < 100; x++)
+		{
+			H.RecordValue("GOODBYE", x + 1, CurrentTime + (time_t)x);
+		}
+	}	
+
+	cout << "Reading 100 Rows (Single-Channel)" << endl;
+	ShardCursor* Csr = H.GetHistory("HELLO", 0, CurrentTime+200);
 	if (Csr == NULL)
 	{
 		cout << "ERROR: Unable to get history" << endl;
@@ -54,6 +72,7 @@ int main(int argv, const char **args)
 	}
 	delete Csr;
 
+	cout << "Reading 100 Rows (Multi-Channel)" << endl;
 	Query Q;
 	Q.from = 0;
 	Q.to = -1;
@@ -63,7 +82,7 @@ int main(int argv, const char **args)
 	Q.Options = 0;
 
 	QueryCursor* C = H.GetHistory(Q);
-	while (C->Next() != CURSOR_OK)
+	while (C->Next() >= 0)
 	{
 		QueryRow QR = C->GetRow();
 		cout << QR.ChannelID << "=" << QR.Value << " @ " << QR.Timestamp << endl;

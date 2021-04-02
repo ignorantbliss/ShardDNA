@@ -44,9 +44,9 @@ int ShardCursor::Next()
 	return Ret;
 }
 
-time_t ShardCursor::Timestamp()
+TIMESTAMP ShardCursor::Timestamp()
 {
-	return *(time_t*)ActiveCursor->Key();
+	return *(TIMESTAMP*)ActiveCursor->Key();
 }
 
 

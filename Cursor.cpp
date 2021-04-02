@@ -53,7 +53,7 @@ void Cursor::SetTree(std::shared_ptr<BTree> Trx)
 	Tree = Trx;
 }
 
-void Cursor::SetEndpoint(time_t ep)
+void Cursor::SetEndpoint(TIMESTAMP ep)
 {
 	EndPoint = ep;
 }
@@ -73,6 +73,10 @@ int Cursor::Next()
 		Active->Load(Tree->DS.get(), Offset);
 		if (Index == -1)
 			Index = 0;
+		if (Active->KeyCount() == 0)
+		{
+			return CURSOR_END;
+		}
 		return CURSOR_PRE;
 	}
 	else
@@ -83,7 +87,7 @@ int Cursor::Next()
 		if (Index >= Active->KeyCount())
 		{			
 			//Destroy the current node.
-			time_t Current = *((time_t*)Active->Keys[Index-1]->Key());
+			TIMESTAMP Current = *((TIMESTAMP*)Active->Keys[Index-1]->Key());
 			std::streamoff NextPos = Active->Next;
 			delete Active;
 			Active = NULL;
@@ -107,7 +111,7 @@ int Cursor::Next()
 	if (EoF == true)
 		return CURSOR_END;
 
-	time_t tm = *(time_t*)Active->Keys[Index]->Payload();
+	TIMESTAMP tm = *(TIMESTAMP*)Active->Keys[Index]->Payload();
 	if ((EndPoint > 0) && (tm > EndPoint))
 	{
 		EoF = true;

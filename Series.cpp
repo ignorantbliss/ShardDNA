@@ -1,11 +1,8 @@
 #include "pch.h"
 #include "Series.h"
 
-Series::Series()
-{
-	Name = "";
-	Loaded = false;
-	RecentTimestamp = 0;
-	RecentValue = 0;
-	
+SeriesInfo::SeriesInfo()
+{	
+	FirstSample = 0;
+	Options = 0;
 }

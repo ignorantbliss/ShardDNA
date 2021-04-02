@@ -25,6 +25,7 @@
 #include "BTree.h"
 #include "TSPoint.h"
 #include "ShardCursor.h"
+#include "Series.h"
 #include <string>
 #include <vector>
 #include <time.h>
@@ -33,7 +34,7 @@ using namespace std;
 class History;
 
 #define PSC std::shared_ptr<ShardCursor>
-
+#define TIMESTAMP time_t
 
 struct HistoryConfig
 {
@@ -72,25 +73,33 @@ public:
 	~History();
 	
 	bool Init(HistoryConfig Cfg);	
-	DStore GetShard(time_t tm, bool create);
-	DStore GetNextShard(time_t tm);	
-	PCursor GetNextShardWith(time_t tm,const char *series);
+	DStore GetShard(TIMESTAMP tm, bool create);
+	DStore GetNextShard(TIMESTAMP tm);
+	PCursor GetNextShardWith(TIMESTAMP tm,const char *series);
+
+	bool SeriesExists(const char* name);
+	SeriesInfo GetSeries(const char* name, SeriesInfo* SI);
 
 	bool RecordValue(const char* name, double Value);
-	bool RecordValue(const char* name, double Value, time_t Stamp);
+	bool RecordValue(const char* name, double Value, TIMESTAMP Stamp, int Options = 0);
 	TSPoint GetLatest(const char* name);
-	ShardCursor* GetHistory(const char* name, time_t from, time_t to);
+	ShardCursor* GetHistory(const char* name, TIMESTAMP from, TIMESTAMP to);
 	QueryCursor* GetHistory(Query Q);
 	QueryCursor* GetHistory(AggregatedQuery Q);
+
+	void ShardDiagnostics();
 
 protected:
 	std::string StoragePath;
 	int TimePerShard;
 	vector<DStore> OpenShards;
+	DStore GetStore(const char* filename);
 
 private:
 	PBTREE Shards;
+	PBTREE Series;
 	DStore ShardStorage;
+	DStore SeriesStorage;
 	std::string BaseDir;
 	std::string ConfigDir;
 

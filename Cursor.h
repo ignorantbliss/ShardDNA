@@ -55,7 +55,7 @@ public:
 
 	void SetPosition(std::streamoff Position, int Index);	
 	void SetTree(std::shared_ptr<BTree> tr);
-	void SetEndpoint(time_t t);
+	void SetEndpoint(TIMESTAMP t);
 	//void SetParent(History* H);
 	//void SetSeries(std::string S);
 
@@ -72,7 +72,7 @@ protected:
 	std::streamoff Offset;		
 	BTreeNode* Active;		
 	int Index;
-	time_t EndPoint;
+	TIMESTAMP EndPoint;
 
 	bool EoF;
 	std::shared_ptr<BTree> Tree;

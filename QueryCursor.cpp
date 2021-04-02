@@ -20,8 +20,7 @@ int QueryCursor::Next()
 	if (Empty == false)
 	{
 #ifndef QUERY_MOMENTUM
-		int R = Cursors[ActiveChannel]->Next();
-		if (R == false)
+		while (Cursors[ActiveChannel].get() == NULL)
 		{
 			ActiveChannel++;
 			if (ActiveChannel >= Channels)
@@ -29,6 +28,32 @@ int QueryCursor::Next()
 				Empty = true;
 				return CURSOR_END;
 			}
+		}
+		int R = Cursors[ActiveChannel]->Next();
+		if (R < 0)
+		{
+			ActiveChannel++;
+			if (ActiveChannel >= Channels)
+			{
+				Empty = true;
+				return CURSOR_END;
+			}
+			while (Cursors[ActiveChannel].get() == NULL)
+			{
+				ActiveChannel++;
+				if (ActiveChannel >= Channels)
+				{
+					Empty = true;
+					return CURSOR_END;
+				}
+			}
+			if (ActiveChannel >= Channels)
+			{
+				Empty = true;
+				return CURSOR_END;
+			}
+			R = Next();
+			
 		}
 		return R;
 #else
@@ -80,4 +105,5 @@ QueryRow QueryCursor::GetRow()
 void QueryCursor::AddChannel(PSC C)
 {
 	Cursors.push_back(C);
+	Channels++;
 }

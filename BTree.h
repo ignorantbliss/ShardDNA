@@ -82,7 +82,7 @@ public:
 	
 	BTreeKey* PointSearch(const void* key, int ln, int mode);
 	PCursor Search(const void* key, int ln, int mode);
-	BTreeKey* Add(const void* key, int keylen, const void* payload, int plen);
+	bool Add(const void* key, int keylen, const void* payload, int plen);
 	PCursor FirstNode();
 
 	/**
@@ -98,7 +98,7 @@ private:
 	bool LoadHeader(const char *buf, int cnt);
 	BTreeKey* _PointSearch(const void* key, int mode);
 	PCursor _Search(const void* key, int mode);
-	BTreeKey* _Add(const void* key, const void* value);
+	bool _Add(const void* key, const void* value);
 	std::streamoff _Create(DStore DS);
 
 	//int KeyLength;

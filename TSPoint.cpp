@@ -33,7 +33,7 @@ TSPoint::TSPoint()
 TSPoint::TSPoint(BTreeKey* Key)
 {	
 	memcpy(&Value, Key->Payload(), sizeof(double));
-	memcpy(&Time, Key->Key(), sizeof(time_t));
+	memcpy(&Time, Key->Key(), sizeof(TIMESTAMP));
 }
 
 TSPoint TSPoint::NullValue()

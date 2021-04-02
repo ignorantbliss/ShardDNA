@@ -8,10 +8,10 @@ class TSPoint
 {
 public:
 	TSPoint(BTreeKey* Key);
-	TSPoint(double v, time_t tm);
+	TSPoint(double v, TIMESTAMP tm);
 	TSPoint();
 
-	time_t Time;
+	TIMESTAMP Time;
 	double Value;
 
 	static TSPoint NullValue();

@@ -194,8 +194,8 @@ bool BTreeNode::_Search(const void* key, int mode, BTreeSearchChain* Chain)
 
 			if (cmp == 0)
 			{
-				/*if ((mode != BTREE_SEARCH_NEXT) || ((leaf == false) && (mode == BTREE_SEARCH_NEXT)))
-				{*/
+				//if ((mode != BTREE_SEARCH_NEXT) || ((leaf == false) && (mode == BTREE_SEARCH_NEXT)))
+				//{
 					if (leaf == true)
 					{
 						Closest = Keys[x];
@@ -325,8 +325,46 @@ std::streamoff BTreeNode::_Split(int SplitPoint)
 bool BTreeNode::_Add(const void* key, const void* value, BTreeSearchChain* Chain, int Depth, int SplitMode)
 {
 	//Is there room in here?
-	//BTreeNode ChainNode = this;// BTreeNode(Base);
-	//ChainNode.Load(datastore, Chain->sequence[Depth]);
+	
+	//Re-calculate the split point...
+	BTreeKey* Closest = NULL;
+	int cmp = 0;
+
+	int ClosestIndex = 0;
+	int HighestIndex = -1;
+
+	for (int x = 0; x <= _KeyCount; x++)
+	{
+		if (x == _KeyCount)
+		{
+			ClosestIndex = x;
+			break;
+		}
+		if (Keys[x] != NULL)
+		{
+			cmp = Keys[x]->CompareTo(key);
+
+			if (cmp == 0)
+			{
+				//Existing Key!
+				return true;
+			}
+			if (cmp < 0)
+			{
+				Closest = Keys[x];
+				ClosestIndex = x;
+			}
+			if (cmp > 0)
+			{				
+				ClosestIndex = x - 1;
+				break;				
+			}
+		}
+	}
+
+	Chain->sequence[Depth].index = ClosestIndex;
+
+	//Now, begin adding...
 	Chain->sequence[Depth].changed = true;	
 	if (_KeyCount >= this->Base->KeysPerNode(leaf))
 	{
@@ -459,13 +497,12 @@ bool BTreeNode::_Add(const void* key, const void* value, BTreeSearchChain* Chain
 			{				
 				Keys[x + 1] = Keys[x];
 			}
-			if (Keys[index] == NULL)
-			{
+			
 				if (leaf == false)
 					Keys[index] = new BTreeKey(&Base->BranchTemplate);
 				else
 					Keys[index] = new BTreeKey(&Base->LeafTemplate);
-			}
+			
 			Keys[index]->Set(key, value);
 			_KeyCount++;
 		}

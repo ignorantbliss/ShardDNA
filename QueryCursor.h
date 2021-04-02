@@ -8,7 +8,7 @@
 struct QueryRow
 {
 	int ChannelID;
-	time_t Timestamp;
+	TIMESTAMP Timestamp;
 	double Value;
 };
 

@@ -13,6 +13,7 @@
 
 // TODO: add headers that you want to pre-compile here
 #define NULL 0
+#define TIMESTAMP time_t
 
 
 #endif //PCH_H
